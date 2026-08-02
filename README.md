@@ -1,2 +1,3 @@
 # snapcircle
-“Moments that matter, shared together”...
+
+“Moments that matter, shared together”

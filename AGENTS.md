@@ -64,6 +64,12 @@ public/uploads/     # User uploads (all files ignored except .gitkeep)
 - **ESLint**: Locked at eslint@9.x until `eslint-plugin-react` ships v10 support. Do NOT bump.
 - **TypeScript**: Currently ^5.9. TS 7.0 (Go-native compiler) blocked until typescript-eslint API stabilizes (~Oct 2026). Do not migrate.
 
+## Auth (Better Auth)
+
+- Server: `src/lib/auth.ts` (`betterAuth` + `prismaAdapter` from `@better-auth/prisma-adapter`, `nextCookies()` plugin). Client: `src/lib/auth-client.ts` (`better-auth/react`). Route handler: `src/app/api/auth/[...all]/route.ts`.
+- Env: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_BETTER_AUTH_URL` (validated in `src/lib/env/serverEnv.ts` / `clientEnv.ts`). Add OAuth client IDs/secrets here for social providers.
+- Schema changes: `bun x auth@latest generate` (pipes `y` when overwriting schema.prisma) then `bunx prisma migrate dev --name <name>` (non-interactive). `auth migrate` is NOT supported with Prisma.
+
 ## Form patterns
 
 Schemas in `src/lib/zodSchema.ts` — export both schema and `type X = z.infer<typeof xSchema>`.
