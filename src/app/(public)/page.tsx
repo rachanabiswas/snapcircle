@@ -1,28 +1,45 @@
-import Header from "@/components/Layout/Header";
-import ToastButton from "@/components/ToastButton";
+import LoginForm from "@/components/Auth/LoginForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/shadcnui/card";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Next.js Starter Fullstack",
-  description: "Production grade Fullstack Next.js starter template",
+  title: "Sign In",
+  description: "Sign in to your SnapCircle account",
 };
 
 const page = () => {
   return (
-    <>
-      <Header />
+    <main className="grid h-dvh place-items-center">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Welcome back</CardTitle>
+          <CardDescription>Sign in to your account to continue</CardDescription>
+        </CardHeader>
 
-      <main className="grid h-dvh place-items-center">
-        <section className="space-y-4 text-center">
-          <h1 className="text-5xl font-semibold">Next.js Starter Fullstack</h1>
-          <h2 className="text-3xl">
-            Production grade Fullstack Next.js starter template
-          </h2>
+        <CardContent>
+          <LoginForm />
+        </CardContent>
 
-          <ToastButton />
-        </section>
-      </main>
-    </>
+        <CardFooter className="justify-center">
+          <p className="text-muted-foreground text-sm">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/register"
+              className="text-primary underline-offset-4 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
+    </main>
   );
 };
 
