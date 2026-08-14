@@ -69,6 +69,16 @@ public/uploads/     # User uploads (all files ignored except .gitkeep)
 - Server: `src/lib/auth.ts` (`betterAuth` + `prismaAdapter` from `@better-auth/prisma-adapter`, `nextCookies()` plugin). Client: `src/lib/auth-client.ts` (`better-auth/react`). Route handler: `src/app/api/auth/[...all]/route.ts`.
 - Env: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_BETTER_AUTH_URL` (validated in `src/lib/env/serverEnv.ts` / `clientEnv.ts`). Add OAuth client IDs/secrets here for social providers.
 - Schema changes: `bun x auth@latest generate` (pipes `y` when overwriting schema.prisma) then `bunx prisma migrate dev --name <name>` (non-interactive). `auth migrate` is NOT supported with Prisma.
+- Gotchas:
+  - `migrate dev` fails with "environment is non-interactive" when a migration emits warnings (e.g. adding a unique index). Workaround: hand-write `prisma/migrations/<timestamp>_<name>/migration.sql` (match Prisma's index naming `account_providerId_accountId_key`), then `bunx prisma migrate reset --force` (dev only).
+  - `migrate reset`/other destructive commands require env `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` = exact user consent text when run by an agent.
+  - Account ids are app-generated strings (no DB default): use `generateId` from `@better-auth/core/utils/id` (32-char alnum, same as Better Auth). Credential accounts: `providerId: "credential"`, `accountId: user.id` (NOT email).
+  - Password hashes are scrypt via `better-auth/crypto` `hashPassword`/`verifyPassword` (NOT argon2 — hashes from @node-rs/argon2 fail verification).
+
+## Seeding
+
+- Seed: `prisma/seed.ts` (admin user, hardcoded creds: `titlyb@gmail.com` / `titlyb@gmail.com`), wired via `migrations.seed` in `prisma.config.ts`. Uses `upsert` on user (by email) + account (by `providerId_accountId` unique) and `hashPassword` from `better-auth/crypto` — idempotent, resets password on re-run.
+- Prisma v7 removed auto-seeding on `migrate dev`/`migrate reset` — seeding runs ONLY via `prisma db seed` (`bun run db:seed`).
 
 ## Form patterns
 

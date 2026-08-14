@@ -11,6 +11,7 @@ import { Button } from "@/components/shadcnui/button";
 import { Input } from "@/components/shadcnui/input";
 import { Field, FieldError, FieldLabel } from "@/components/shadcnui/field";
 import { toast } from "@/components/shadcnui/toast";
+import PasswordInput from "@/components/Auth/PasswordInput";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -97,10 +98,9 @@ const RegisterForm = () => {
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-            <Input
+            <PasswordInput
               {...field}
               id={field.name}
-              type="password"
               placeholder="••••••••"
               autoComplete="new-password"
               aria-invalid={fieldState.invalid}
@@ -116,10 +116,9 @@ const RegisterForm = () => {
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
-            <Input
+            <PasswordInput
               {...field}
               id={field.name}
-              type="password"
               placeholder="••••••••"
               autoComplete="new-password"
               aria-invalid={fieldState.invalid}
