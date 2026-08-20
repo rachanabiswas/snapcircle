@@ -1,8 +1,17 @@
 import Link from "next/link";
-import SignOutButton from "@/components/Auth/SignOutButton";
-import ThemeToggleButton from "./ThemeToggleButton";
+import { headers } from "next/headers";
 
-const Header = () => {
+import SignOutButton from "@/components/Auth/SignOutButton";
+import { auth } from "@/lib/auth";
+import UserDrawer from "./UserDrawer";
+
+const Header = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user ?? null;
+
   return (
     <header
       className="fixed top-0 right-0 left-0 z-50 border-b shadow"
@@ -21,7 +30,7 @@ const Header = () => {
 
           <SignOutButton />
 
-          <ThemeToggleButton />
+          <UserDrawer user={user} />
         </nav>
       </div>
     </header>
