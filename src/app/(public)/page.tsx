@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 const page = () => {
   return (
-    <main className="grid h-dvh place-items-center">
+    <main className="mt-14 grid min-h-[calc(100dvh-3.5rem)] place-items-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Welcome back</CardTitle>

@@ -33,6 +33,7 @@ Path aliases: `@/*` → `./src/*`, `@generated/*` → `./generated/*`.
 - **Primary**: `bun lint` — runs `next typegen && tsc --noEmit && eslint`
 - **Build gate**: `bun run build` — `prisma generate && next build`
 - **Full prod**: `bun prod` — `prisma generate && next build && next start` (before schema/env changes)
+- **Visual/UI verification**: Use `playwright-cli` in `--headed` mode. Run `playwright-cli --help` to see all available commands. Capture and review screenshots with `playwright-cli screenshot` (vision capable). Example: `playwright-cli open http://localhost:3000 --headed` then `playwright-cli screenshot --full-page`.
 
 ## Project structure
 

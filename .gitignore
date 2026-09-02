@@ -48,3 +48,4 @@ prisma/dev.db
 # uploads
 public/uploads/*
 !public/uploads/.gitkeep
+/.playwright-cli
