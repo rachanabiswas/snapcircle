@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+import AuthCardHeader from "@/components/Auth/AuthCardHeader";
+import { auth } from "@/lib/auth";
 import RegisterForm from "@/components/Auth/RegisterForm";
 import {
   Card,
@@ -15,12 +20,21 @@ export const metadata: Metadata = {
   description: "Create your SnapCircle account",
 };
 
-const page = () => {
+const page = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <>
-      <main className="mt-14 grid min-h-[calc(100dvh-3.5rem)] place-items-center p-4">
+      <main className="grid min-h-dvh place-items-center p-4">
         <Card className="w-full max-w-sm">
           <CardHeader>
+            <AuthCardHeader />
             <CardTitle>Create an account</CardTitle>
             <CardDescription>Join SnapCircle to get started</CardDescription>
           </CardHeader>

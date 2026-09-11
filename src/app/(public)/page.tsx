@@ -1,4 +1,5 @@
 import LoginForm from "@/components/Auth/LoginForm";
+import AuthCardHeader from "@/components/Auth/AuthCardHeader";
 import {
   Card,
   CardContent,
@@ -8,18 +9,31 @@ import {
   CardTitle,
 } from "@/components/shadcnui/card";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Sign In",
   description: "Sign in to your SnapCircle account",
 };
 
-const page = () => {
+const page = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <main className="mt-14 grid min-h-[calc(100dvh-3.5rem)] place-items-center p-4">
+    <main className="grid min-h-dvh place-items-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
+          <AuthCardHeader />
           <CardTitle>Welcome back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>

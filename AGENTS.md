@@ -24,7 +24,8 @@ Path aliases: `@/*` → `./src/*`, `@generated/*` → `./generated/*`.
 
 ## Agent behavior
 
-- **Ask questions** when ambiguous or before destructive actions. Prefer one batched question.
+- **Ask questions** when ambiguous or before destructive actions. Ask one at a time, since one answer can affect the next questions.
+- **Explain before asking**: when you need to ask a question, first explain in plain words what you are asking and what each option means, then call the question tool.
 - **Update this file** when you discover non-obvious gotchas, fixes, or conventions.
 - **Use skills + MCPs** before writing code matching `prisma-*`, `next-*`, `better-auth-*`, `zod`, etc. Use `shadcn` MCP for component add/search/audit. Use `better-auth` MCP for auth docs.
 
