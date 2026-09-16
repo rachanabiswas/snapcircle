@@ -21,3 +21,21 @@ export const registerSchema = z
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const postContentSchema = z
+  .string()
+  .trim()
+  .min(1, "Post cannot be empty")
+  .max(500, "Post must be at most 500 characters");
+
+export const createPostSchema = z.object({
+  content: postContentSchema,
+});
+
+export type CreatePostValues = z.infer<typeof createPostSchema>;
+
+export const replySchema = z.object({
+  content: postContentSchema,
+});
+
+export type ReplyValues = z.infer<typeof replySchema>;

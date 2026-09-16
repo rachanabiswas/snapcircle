@@ -1,60 +1,61 @@
-import LoginForm from "@/components/Auth/LoginForm";
-import AuthCardHeader from "@/components/Auth/AuthCardHeader";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcnui/card";
-import { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import LoginForm from "@/components/Auth/LoginForm";
+import ThemeToggleButton from "@/components/Layout/ThemeToggleButton";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/shadcnui/card";
 import { auth } from "@/lib/auth";
 
-export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign in to your SnapCircle account",
-};
-
-const page = async () => {
+const PublicPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
   if (session) {
-    redirect("/dashboard");
+    redirect("/feed");
   }
 
   return (
-    <main className="grid min-h-dvh place-items-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <AuthCardHeader />
-          <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
-        </CardHeader>
+    <main className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-semibold">SnapCircle</h1>
+        </div>
+        <ThemeToggleButton />
+      </div>
 
-        <CardContent>
-          <LoginForm />
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <p className="text-muted-foreground text-sm">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="text-primary underline-offset-4 hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+      <div className="flex flex-1 items-center justify-center">
+        <div className="w-full max-w-md">
+          <Card>
+            <CardHeader>
+              <CardTitle>Welcome back</CardTitle>
+              <CardDescription>
+                Sign in to your account to continue
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LoginForm />
+              <p className="text-muted-foreground mt-6 text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/register"
+                  className="text-primary font-medium hover:underline">
+                  Sign up
+                </Link>
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </main>
   );
 };
 
-export default page;
+export default PublicPage;

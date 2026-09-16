@@ -1,6 +1,11 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-import { SettingsIcon, ShieldIcon, UserIcon } from "lucide-react";
+import {
+  NewspaperIcon,
+  SettingsIcon,
+  ShieldIcon,
+  UserIcon,
+} from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import {
@@ -29,6 +34,23 @@ const DashboardPage = async () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Link href="/feed">
+          <Card className="hover:bg-muted/50 h-full transition-colors">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <NewspaperIcon
+                  className="size-4"
+                  aria-hidden="true"
+                />
+                Feed
+              </CardTitle>
+              <CardDescription>
+                See latest posts and share updates
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
         <Link href="/profile">
           <Card className="hover:bg-muted/50 h-full transition-colors">
             <CardHeader>

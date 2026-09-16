@@ -36,7 +36,7 @@ const RegisterForm = () => {
             description: "Welcome to SnapCircle!",
             type: "success",
           });
-          router.push("/dashboard");
+          router.push("/feed");
         },
         onError: (ctx) => {
           toast.add({

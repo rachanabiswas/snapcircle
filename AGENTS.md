@@ -36,6 +36,13 @@ Path aliases: `@/*` → `./src/*`, `@generated/*` → `./generated/*`.
 - **Full prod**: `bun prod` — `prisma generate && next build && next start` (before schema/env changes)
 - **Visual/UI verification**: Use `playwright-cli` in `--headed` mode. Run `playwright-cli --help` to see all available commands. Capture and review screenshots with `playwright-cli screenshot` (vision capable). Example: `playwright-cli open http://localhost:3000 --headed` then `playwright-cli screenshot --full-page`.
 
+## Background processes
+
+- Never start long-running processes (dev server, `next start`, watchers) in the foreground. It blocks the shell session.
+- Always launch detached on PowerShell with `Start-Process -WindowStyle Hidden`, redirecting stdout/stderr to a log file. Example: `Start-Process -FilePath "bun" -ArgumentList "x --bun next start -p 3000" -WindowStyle Hidden -RedirectStandardOutput ".logs/next-start.log" -RedirectStandardError ".logs/next-start.err.log"`.
+- Only use paths inside the project directory (e.g. `.logs/`, gitignored). Never write logs or temp files outside the repo.
+- Verify with a separate short-lived command (poll the log or `Invoke-WebRequest`), then stop the process with `Stop-Process` when done.
+
 ## Project structure
 
 ```
@@ -113,6 +120,21 @@ Each field goes through `Controller`:
 ```
 
 Submit: `<form onSubmit={handleSubmit(handler)} noValidate>`. Button disabled while submitting with icon toggle.
+
+Links that look like buttons: never put `render={<Link />}` (or `<label>`) inside Base UI `Button` — it logs a `nativeButton` console error and mangles semantics. Style the native element directly with `buttonVariants`:
+
+```typescript
+import Link from "next/link";
+import { buttonVariants } from "@/components/shadcnui/button";
+
+<Link
+  href="/feed"
+  className={buttonVariants({ variant: "secondary", size: "sm" })}>
+  Login
+</Link>;
+```
+
+Same for `<label>` triggers (e.g. file inputs): `className={cn(buttonVariants({ variant: "outline", size: "sm" }), "cursor-pointer")}`.
 
 ## Git commits
 
