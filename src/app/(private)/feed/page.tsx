@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 
 import ComposeBox from "@/components/Feed/ComposeBox";
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
+import TimeAgo from "@/components/Feed/TimeAgo";
 import {
   Avatar,
   AvatarFallback,
@@ -31,17 +32,6 @@ const getInitials = (name: string) =>
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
-const formatTime = (date: Date) => {
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMin < 1) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
-  const diffDays = Math.floor(diffHr / 24);
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
-};
 
 const FeedPage = async () => {
   const session = await auth.api.getSession({
@@ -200,7 +190,7 @@ const FeedPage = async () => {
                         {member.name}
                       </span>
                       <span className="text-muted-foreground text-xs">
-                        joined {formatTime(member.createdAt)}
+                        joined <TimeAgo iso={member.createdAt.toISOString()} />
                       </span>
                     </div>
                   </div>

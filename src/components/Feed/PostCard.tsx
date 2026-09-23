@@ -6,6 +6,7 @@ import { useState } from "react";
 import { HeartIcon, MessageCircleIcon, Trash2Icon } from "lucide-react";
 
 import { deletePostAction, toggleLikeAction } from "@/server/posts";
+import TimeAgo from "@/components/Feed/TimeAgo";
 import {
   Avatar,
   AvatarFallback,
@@ -52,19 +53,6 @@ const getInitials = (name: string) => {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-};
-
-const formatTime = (iso: string) => {
-  const date = new Date(iso);
-  const diffMs = Date.now() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
-  const diffDays = Math.floor(diffHr / 24);
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
 };
 
 const PostCard = ({
@@ -155,7 +143,7 @@ const PostCard = ({
           <div className="flex min-w-0 flex-col leading-tight">
             <span className="truncate font-medium">{post.author.name}</span>
             <span className="text-muted-foreground text-xs">
-              {formatTime(post.createdAt)}
+              <TimeAgo iso={post.createdAt} />
             </span>
           </div>
         </div>
