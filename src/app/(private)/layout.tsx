@@ -10,6 +10,7 @@ import {
 } from "@/components/shadcnui/sidebar";
 import { Separator } from "@/components/shadcnui/separator";
 import { auth } from "@/lib/auth";
+import prisma from "@/lib/dbClient/prisma";
 import { LayoutProps } from "@/lib/types";
 
 const PrivateLayout = async ({ children }: LayoutProps) => {
@@ -26,6 +27,10 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
 
   const user = session.user;
 
+  const unreadCount = await prisma.notification.count({
+    where: { recipientId: user.id, readAt: null },
+  });
+
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar
@@ -35,6 +40,7 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
           image: user.image,
           role: user.role ?? null,
         }}
+        unreadCount={unreadCount}
       />
       <SidebarInset>
         <div className="flex items-center gap-2 border-b px-4 py-2">

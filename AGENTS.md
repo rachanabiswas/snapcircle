@@ -35,6 +35,7 @@ Path aliases: `@/*` → `./src/*`, `@generated/*` → `./generated/*`.
 - **Build gate**: `bun run build` — `prisma generate && next build`
 - **Full prod**: `bun prod` — `prisma generate && next build && next start` (before schema/env changes)
 - **Visual/UI verification**: Use `playwright-cli` in `--headed` mode. Run `playwright-cli --help` to see all available commands. Capture and review screenshots with `playwright-cli screenshot` (vision capable). Example: `playwright-cli open http://localhost:3000 --headed` then `playwright-cli screenshot --full-page`.
+- **Stale generated client**: after `prisma generate`, restart any running dev server. A stale client crashes private routes with undefined model access. Test logins against port 3000 since auth URLs point there.
 
 ## Background processes
 

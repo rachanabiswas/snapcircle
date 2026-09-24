@@ -106,13 +106,13 @@ export const createReplyAction = async (
 
   const parent = await prisma.post.findUnique({
     where: { id: parentId },
-    select: { id: true },
+    select: { id: true, authorId: true },
   });
   if (!parent) {
     return { ok: false, error: "Post not found" };
   }
 
-  await prisma.post.create({
+  const reply = await prisma.post.create({
     data: {
       id: generateId(),
       authorId: user.id,
@@ -121,8 +121,22 @@ export const createReplyAction = async (
     },
   });
 
+  if (parent.authorId !== user.id) {
+    await prisma.notification.create({
+      data: {
+        id: generateId(),
+        recipientId: parent.authorId,
+        actorId: user.id,
+        type: "REPLY",
+        postId: parentId,
+        replyId: reply.id,
+      },
+    });
+  }
+
   revalidatePath(`/post/${parentId}`);
   revalidatePath("/feed");
+  revalidatePath("/notifications");
   return { ok: true };
 };
 
@@ -139,19 +153,39 @@ export const toggleLikeAction = async (
     select: { id: true },
   });
 
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: { id: true, authorId: true, parentId: true },
+  });
+  if (!post) {
+    return { ok: false, error: "Post not found" };
+  }
+
   if (existing) {
     await prisma.like.delete({ where: { id: existing.id } });
-  } else {
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
-      select: { id: true, parentId: true },
+    await prisma.notification.deleteMany({
+      where: {
+        recipientId: post.authorId,
+        actorId: user.id,
+        type: "LIKE",
+        postId,
+      },
     });
-    if (!post) {
-      return { ok: false, error: "Post not found" };
-    }
+  } else {
     await prisma.like.create({
       data: { id: generateId(), userId: user.id, postId },
     });
+    if (post.authorId !== user.id) {
+      await prisma.notification.create({
+        data: {
+          id: generateId(),
+          recipientId: post.authorId,
+          actorId: user.id,
+          type: "LIKE",
+          postId,
+        },
+      });
+    }
     if (post.parentId) {
       revalidatePath(`/post/${post.parentId}`);
     }
@@ -159,6 +193,7 @@ export const toggleLikeAction = async (
 
   revalidatePath("/feed");
   revalidatePath(`/post/${postId}`);
+  revalidatePath("/notifications");
   return { ok: true };
 };
 
@@ -188,6 +223,7 @@ export const deletePostAction = async (
 
   revalidatePath("/feed");
   revalidatePath("/dashboard");
+  revalidatePath("/notifications");
   if (post.parentId) {
     revalidatePath(`/post/${post.parentId}`);
   }

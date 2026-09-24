@@ -17,6 +17,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcnui/avatar";
+import { Badge } from "@/components/shadcnui/badge";
 import {
   Sidebar,
   SidebarContent,
@@ -50,7 +51,13 @@ const getInitials = (name: string | null, email: string | null) => {
   return email?.slice(0, 2).toUpperCase() ?? "U";
 };
 
-const AppSidebar = ({ user }: { user: SidebarUser }) => {
+const AppSidebar = ({
+  user,
+  unreadCount = 0,
+}: {
+  user: SidebarUser;
+  unreadCount?: number;
+}) => {
   const pathname = usePathname();
 
   const isAdmin = user?.role === "admin";
@@ -103,7 +110,6 @@ const AppSidebar = ({ user }: { user: SidebarUser }) => {
                   </AvatarFallback>
                 </Avatar>
                 <span className="flex flex-col text-left leading-tight">
-                  <span className="font-heading font-medium">SnapCircle</span>
                   <span className="text-muted-foreground truncate text-xs">
                     {user?.email ?? "Welcome"}
                   </span>
@@ -124,13 +130,24 @@ const AppSidebar = ({ user }: { user: SidebarUser }) => {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       isActive={pathname === item.href}
-                      tooltip={item.label}
+                      tooltip={
+                        item.href === "/notifications" && unreadCount > 0 ?
+                          `Notifications, ${unreadCount} unread`
+                        : item.label
+                      }
                       render={<Link href={item.href} />}>
                       <item.icon
                         data-icon="inline-start"
                         aria-hidden="true"
                       />
                       <span>{item.label}</span>
+                      {item.href === "/notifications" && unreadCount > 0 && (
+                        <Badge
+                          variant="default"
+                          className="ml-auto">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </Badge>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
