@@ -29,7 +29,8 @@ const toCard = (
     content: string;
     imageUrl: string | null;
     createdAt: Date;
-    author: { id: string; name: string; image: string | null };
+    updatedAt: Date;
+    author: { id: string; name: string; image: string | null; email: string };
     _count: { likes: number; replies: number };
     likes: { id: string }[];
   },
@@ -39,7 +40,12 @@ const toCard = (
   content: post.content,
   imageUrl: post.imageUrl,
   createdAt: post.createdAt.toISOString(),
-  author: { name: post.author.name, image: post.author.image },
+  updatedAt: post.updatedAt.toISOString(),
+  author: {
+    name: post.author.name,
+    image: post.author.image,
+    email: post.author.email,
+  },
   likeCount: post._count.likes,
   replyCount: post._count.replies,
   liked: post.likes.length > 0,
@@ -57,7 +63,7 @@ const ThreadPage = async ({ params }: ThreadPageProps) => {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
-      author: { select: { id: true, name: true, image: true } },
+      author: { select: { id: true, name: true, image: true, email: true } },
       _count: { select: { likes: true, replies: true } },
       likes: {
         where: { userId: currentUserId },
@@ -74,7 +80,7 @@ const ThreadPage = async ({ params }: ThreadPageProps) => {
     where: { parentId: id },
     orderBy: { createdAt: "asc" },
     include: {
-      author: { select: { id: true, name: true, image: true } },
+      author: { select: { id: true, name: true, image: true, email: true } },
       _count: { select: { likes: true, replies: true } },
       likes: {
         where: { userId: currentUserId },

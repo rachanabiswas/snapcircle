@@ -1,14 +1,17 @@
+import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { BellIcon } from "lucide-react";
 
 import AppSidebar from "@/components/Layout/AppSidebar";
-import SignOutButton from "@/components/Auth/SignOutButton";
+import UserMenu from "@/components/Layout/UserMenu";
+import { Badge } from "@/components/shadcnui/badge";
+import { buttonVariants } from "@/components/shadcnui/button";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/shadcnui/sidebar";
-import { Separator } from "@/components/shadcnui/separator";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/dbClient/prisma";
 import { LayoutProps } from "@/lib/types";
@@ -43,15 +46,36 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
         unreadCount={unreadCount}
       />
       <SidebarInset>
-        <div className="flex items-center gap-2 border-b px-4 py-2">
+        <div className="flex h-16 items-center gap-2 border-b px-4">
           <SidebarTrigger aria-label="Toggle sidebar" />
-          <Separator
-            orientation="vertical"
-            className="h-4"
-          />
-          <span className="font-heading text-sm font-medium">SnapCircle</span>
-          <div className="ml-auto">
-            <SignOutButton />
+          <div className="ml-auto flex items-center gap-1">
+            <Link
+              href="/notifications"
+              className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+              aria-label={
+                unreadCount > 0 ?
+                  `Notifications, ${unreadCount} unread`
+                : "Notifications"
+              }>
+              <span className="relative">
+                <BellIcon aria-hidden="true" />
+                {unreadCount > 0 && (
+                  <Badge
+                    variant="default"
+                    className="absolute -top-1.5 -right-1.5 h-4 min-w-4 px-1 text-[10px]">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+              </span>
+            </Link>
+            <UserMenu
+              user={{
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                role: user.role ?? null,
+              }}
+            />
           </div>
         </div>
         <div className="flex-1">{children}</div>

@@ -46,7 +46,7 @@ const FeedPage = async () => {
       orderBy: { createdAt: "desc" },
       take: 20,
       include: {
-        author: { select: { id: true, name: true, image: true } },
+        author: { select: { id: true, name: true, image: true, email: true } },
         _count: { select: { likes: true, replies: true } },
         likes: {
           where: { userId: currentUserId },
@@ -71,19 +71,24 @@ const FeedPage = async () => {
     }),
   ]);
 
+  const popularIds = new Set(popular.map((post) => post.id));
+
   const cards: PostCardPost[] = posts.map((post) => ({
     id: post.id,
     content: post.content,
     imageUrl: post.imageUrl,
     createdAt: post.createdAt.toISOString(),
+    updatedAt: post.updatedAt.toISOString(),
     author: {
       name: post.author.name,
       image: post.author.image,
+      email: post.author.email,
     },
     likeCount: post._count.likes,
     replyCount: post._count.replies,
     liked: post.likes.length > 0,
     isOwner: post.author.id === currentUserId,
+    isPopular: popularIds.has(post.id),
   }));
 
   return (

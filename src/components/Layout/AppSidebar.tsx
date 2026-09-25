@@ -12,11 +12,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadcnui/avatar";
 import { Badge } from "@/components/shadcnui/badge";
 import {
   Sidebar,
@@ -38,18 +33,6 @@ export type SidebarUser = {
   image?: string | null;
   role?: string | null;
 } | null;
-
-const getInitials = (name: string | null, email: string | null) => {
-  if (name) {
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
-  }
-  return email?.slice(0, 2).toUpperCase() ?? "U";
-};
 
 const AppSidebar = ({
   user,
@@ -98,20 +81,14 @@ const AppSidebar = ({
                 size="lg"
                 tooltip="SnapCircle"
                 render={<Link href="/feed" />}>
-                <Avatar size="sm">
-                  {user?.image && (
-                    <AvatarImage
-                      src={user.image}
-                      alt={user.name ?? "User avatar"}
-                    />
-                  )}
-                  <AvatarFallback>
-                    {getInitials(user?.name ?? null, user?.email ?? null)}
-                  </AvatarFallback>
-                </Avatar>
+                <span
+                  className="bg-primary text-primary-foreground font-heading flex size-8 items-center justify-center rounded-md text-sm font-semibold"
+                  aria-hidden="true">
+                  S
+                </span>
                 <span className="flex flex-col text-left leading-tight">
-                  <span className="text-muted-foreground truncate text-xs">
-                    {user?.email ?? "Welcome"}
+                  <span className="font-heading truncate text-sm font-medium">
+                    SnapCircle
                   </span>
                 </span>
               </SidebarMenuButton>
