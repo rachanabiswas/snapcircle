@@ -82,11 +82,11 @@ const AppSidebar = ({
                 tooltip="SnapCircle"
                 render={<Link href="/feed" />}>
                 <span
-                  className="bg-primary text-primary-foreground font-heading flex size-8 items-center justify-center rounded-md text-sm font-semibold"
+                  className="bg-primary text-primary-foreground font-heading flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold"
                   aria-hidden="true">
                   S
                 </span>
-                <span className="flex flex-col text-left leading-tight">
+                <span className="flex flex-col text-left leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="font-heading truncate text-sm font-medium">
                     SnapCircle
                   </span>
@@ -96,7 +96,7 @@ const AppSidebar = ({
           </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarSeparator />
+        <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
         <SidebarContent>
           <SidebarGroup>
@@ -117,15 +117,23 @@ const AppSidebar = ({
                         data-icon="inline-start"
                         aria-hidden="true"
                       />
-                      <span>{item.label}</span>
+                      <span className="group-data-[collapsible=icon]:hidden">
+                        {item.label}
+                      </span>
                       {item.href === "/notifications" && unreadCount > 0 && (
                         <Badge
                           variant="default"
-                          className="ml-auto">
+                          className="ml-auto group-data-[collapsible=icon]:hidden">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </Badge>
                       )}
                     </SidebarMenuButton>
+                    {item.href === "/notifications" && unreadCount > 0 && (
+                      <span
+                        aria-hidden="true"
+                        className="bg-primary absolute top-1.5 right-1.5 hidden size-1.5 rounded-full group-data-[collapsible=icon]:block"
+                      />
+                    )}
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>

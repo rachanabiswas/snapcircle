@@ -3,6 +3,9 @@
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import { buttonVariants } from "@/components/shadcnui/button";
+import { cn } from "@/lib/utils";
+
 const ThemeToggleButton = () => {
   const { theme, setTheme } = useTheme();
 
@@ -10,14 +13,18 @@ const ThemeToggleButton = () => {
     <button
       type="button"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="flex cursor-pointer items-center">
+      aria-label="Toggle theme"
+      className={cn(
+        buttonVariants({ variant: "ghost", size: "icon-sm" }),
+        "relative cursor-pointer",
+      )}>
       <SunIcon
-        size={24}
+        aria-hidden="true"
         className="-rotate-90 opacity-100 transition-all duration-300 dark:rotate-0 dark:opacity-0"
       />
 
       <MoonStarIcon
-        size={24}
+        aria-hidden="true"
         className="absolute -rotate-90 opacity-0 transition-all duration-300 dark:rotate-0 dark:opacity-100"
       />
     </button>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { BellIcon } from "lucide-react";
 
 import AppSidebar from "@/components/Layout/AppSidebar";
+import ThemeToggleButton from "@/components/Layout/ThemeToggleButton";
 import UserMenu from "@/components/Layout/UserMenu";
 import { Badge } from "@/components/shadcnui/badge";
 import { buttonVariants } from "@/components/shadcnui/button";
@@ -49,6 +50,7 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
         <div className="flex h-16 items-center gap-2 border-b px-4">
           <SidebarTrigger aria-label="Toggle sidebar" />
           <div className="ml-auto flex items-center gap-1">
+            <ThemeToggleButton />
             <Link
               href="/notifications"
               className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
