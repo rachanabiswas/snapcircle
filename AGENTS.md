@@ -137,6 +137,16 @@ import { buttonVariants } from "@/components/shadcnui/button";
 
 Same for `<label>` triggers (e.g. file inputs): `className={cn(buttonVariants({ variant: "outline", size: "sm" }), "cursor-pointer")}`.
 
+Selects: Base UI `Select.Value` shows the raw value when the popup items are not mounted. Always pass a format function child mapping value to label:
+
+```typescript
+<SelectValue placeholder="Select gender">
+  {(value: Gender | null) =>
+    value && value in genderLabels ? genderLabels[value] : "Select gender"
+  }
+</SelectValue>
+```
+
 ## Git commits
 
 Use PowerShell here-strings:

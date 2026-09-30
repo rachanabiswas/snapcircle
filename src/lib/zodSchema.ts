@@ -39,3 +39,33 @@ export const replySchema = z.object({
 });
 
 export type ReplyValues = z.infer<typeof replySchema>;
+
+export const genderOptions = [
+  "male",
+  "female",
+  "other",
+  "prefer_not_to_say",
+] as const;
+
+export const genderSchema = z.enum(genderOptions);
+
+export type Gender = z.infer<typeof genderSchema>;
+
+export const genderLabels: Record<Gender, string> = {
+  male: "Male",
+  female: "Female",
+  other: "Other",
+  prefer_not_to_say: "Prefer not to say",
+};
+
+export const profileBioSchema = z
+  .string()
+  .trim()
+  .max(500, "Bio must be at most 500 characters");
+
+export const updateProfileSchema = z.object({
+  bio: profileBioSchema,
+  gender: genderSchema,
+});
+
+export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
