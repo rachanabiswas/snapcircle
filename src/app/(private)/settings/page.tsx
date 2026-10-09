@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 const SettingsPage = () => {
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      <h1 className="text-2xl font-semibold">Settings</h1>
       <p className="text-muted-foreground">
         Your settings page is under construction.
       </p>

@@ -93,11 +93,6 @@ const FeedPage = async () => {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold">Feed</h1>
-        <p className="text-muted-foreground">Latest posts from your circle</p>
-      </div>
-
       <ComposeBox
         user={{
           name: currentUser?.name ?? null,

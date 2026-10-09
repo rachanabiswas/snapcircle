@@ -25,14 +25,6 @@ const DashboardPage = async () => {
 
   return (
     <div className="mx-auto mt-14 max-w-5xl px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back{user?.name ? `, ${user.name}` : ""}!
-          {user?.email ? ` — ${user.email}` : ""}
-        </p>
-      </div>
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Link href="/feed">
           <Card className="hover:bg-muted/50 h-full transition-colors">

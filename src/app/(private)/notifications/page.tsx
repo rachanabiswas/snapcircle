@@ -113,10 +113,6 @@ const NotificationsPage = async () => {
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold">Notifications</h1>
-        <p className="text-muted-foreground">Likes and replies to your posts</p>
-      </div>
       <NotificationsList items={items} />
     </main>
   );

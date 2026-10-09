@@ -15,13 +15,6 @@ const AdminPage = async () => {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-10">
-      <div>
-        <h1 className="text-3xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">
-          Manage users, roles, and bans
-        </p>
-      </div>
-
       <UsersTable />
     </div>
   );

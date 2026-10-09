@@ -42,7 +42,6 @@ const ProfilePage = async () => {
   if (!user) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <h1 className="text-2xl font-semibold">Profile</h1>
         <p className="text-muted-foreground">
           Please sign in to view your profile.
         </p>
@@ -91,11 +90,6 @@ const ProfilePage = async () => {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-4">
-        <h1 className="text-2xl font-semibold">Profile</h1>
-        <p className="text-muted-foreground">Your personal page</p>
-      </div>
-
       <ProfileSection
         user={{
           name: user.name,
