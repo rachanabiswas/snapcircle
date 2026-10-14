@@ -31,7 +31,7 @@ const AppHeader = ({
   const { crumbs } = getHeaderTitle(pathname ?? "/feed");
 
   return (
-    <header className="flex h-16 items-center gap-2 border-b px-4">
+    <header className="bg-background sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger aria-label="Toggle sidebar" />
       <Breadcrumb className="min-w-0">
         <BreadcrumbList className="flex-nowrap gap-1.5 overflow-hidden text-sm">

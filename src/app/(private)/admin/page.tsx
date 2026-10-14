@@ -10,7 +10,7 @@ const AdminPage = async () => {
   });
 
   if (session?.user.role !== "admin") {
-    redirect("/dashboard");
+    redirect("/feed");
   }
 
   return (

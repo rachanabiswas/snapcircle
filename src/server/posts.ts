@@ -28,6 +28,24 @@ const requireUser = async () => {
   return session?.user ?? null;
 };
 
+const shouldNotify = async (
+  recipientId: string,
+  kind: "like" | "reply",
+): Promise<boolean> => {
+  const prefs = await prisma.notificationPreference.findUnique({
+    where: { userId: recipientId },
+    select: {
+      likeNotifications: true,
+      replyNotifications: true,
+      pauseAll: true,
+    },
+  });
+  if (!prefs) return true;
+  if (prefs.pauseAll) return false;
+  if (kind === "like") return prefs.likeNotifications;
+  return prefs.replyNotifications;
+};
+
 const storeUpload = async (image: File): Promise<string> => {
   const ext = MIME_TO_EXT[image.type];
   if (!ext) {
@@ -83,7 +101,6 @@ export const createPostAction = async (
   });
 
   revalidatePath("/feed");
-  revalidatePath("/dashboard");
   return { ok: true };
 };
 
@@ -122,16 +139,18 @@ export const createReplyAction = async (
   });
 
   if (parent.authorId !== user.id) {
-    await prisma.notification.create({
-      data: {
-        id: generateId(),
-        recipientId: parent.authorId,
-        actorId: user.id,
-        type: "REPLY",
-        postId: parentId,
-        replyId: reply.id,
-      },
-    });
+    if (await shouldNotify(parent.authorId, "reply")) {
+      await prisma.notification.create({
+        data: {
+          id: generateId(),
+          recipientId: parent.authorId,
+          actorId: user.id,
+          type: "REPLY",
+          postId: parentId,
+          replyId: reply.id,
+        },
+      });
+    }
   }
 
   revalidatePath(`/post/${parentId}`);
@@ -176,15 +195,17 @@ export const toggleLikeAction = async (
       data: { id: generateId(), userId: user.id, postId },
     });
     if (post.authorId !== user.id) {
-      await prisma.notification.create({
-        data: {
-          id: generateId(),
-          recipientId: post.authorId,
-          actorId: user.id,
-          type: "LIKE",
-          postId,
-        },
-      });
+      if (await shouldNotify(post.authorId, "like")) {
+        await prisma.notification.create({
+          data: {
+            id: generateId(),
+            recipientId: post.authorId,
+            actorId: user.id,
+            type: "LIKE",
+            postId,
+          },
+        });
+      }
     }
     if (post.parentId) {
       revalidatePath(`/post/${post.parentId}`);
@@ -222,7 +243,6 @@ export const deletePostAction = async (
   await prisma.post.delete({ where: { id: postId } });
 
   revalidatePath("/feed");
-  revalidatePath("/dashboard");
   revalidatePath("/notifications");
   if (post.parentId) {
     revalidatePath(`/post/${post.parentId}`);

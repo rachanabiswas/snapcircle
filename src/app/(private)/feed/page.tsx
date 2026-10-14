@@ -92,7 +92,7 @@ const FeedPage = async () => {
   }));
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <main className="mx-auto max-w-5xl px-4 py-6">
       <ComposeBox
         user={{
           name: currentUser?.name ?? null,
@@ -101,10 +101,10 @@ const FeedPage = async () => {
         }}
       />
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_300px]">
-        <div className="grid min-w-0 items-start gap-4 sm:grid-cols-2">
+      <div className="mt-3 grid items-start gap-3 lg:grid-cols-[1fr_300px]">
+        <div className="flex min-w-0 flex-col gap-3">
           {cards.length === 0 ?
-            <Card className="sm:col-span-2">
+            <Card>
               <CardHeader>
                 <CardTitle>No posts yet</CardTitle>
                 <CardDescription>
@@ -127,7 +127,7 @@ const FeedPage = async () => {
           }
         </div>
 
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-4">
+        <aside className="flex flex-col gap-3 lg:sticky lg:top-16">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Popular right now</CardTitle>

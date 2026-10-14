@@ -10,7 +10,6 @@ export type HeaderTitle = {
 
 const TITLES: Record<string, HeaderTitle> = {
   "/feed": { title: "Feed", crumbs: [{ label: "Feed" }] },
-  "/dashboard": { title: "Dashboard", crumbs: [{ label: "Dashboard" }] },
   "/profile": { title: "Profile", crumbs: [{ label: "Profile" }] },
   "/notifications": {
     title: "Notifications",

@@ -177,9 +177,11 @@ const PostCard = ({
   };
 
   return (
-    <Card className="transition-shadow hover:shadow-md">
+    <Card
+      size={isGrid ? "sm" : "default"}
+      className="transition-shadow hover:shadow-md">
       <CardHeader>
-        <div className="flex items-center gap-3">
+        <div className={cn("flex items-center", isGrid ? "gap-2" : "gap-3")}>
           <Avatar size={isGrid ? "sm" : "default"}>
             {post.author.image && (
               <AvatarImage
@@ -260,11 +262,16 @@ const PostCard = ({
       </CardHeader>
 
       <CardContent>
-        <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+        <p
+          className={cn(
+            "whitespace-pre-wrap",
+            isGrid ? "text-sm leading-snug" : "text-[15px] leading-relaxed",
+          )}>
           {post.content}
         </p>
         {tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div
+            className={cn("flex flex-wrap gap-1.5", isGrid ? "mt-2" : "mt-3")}>
             {tags.map((tag) => (
               <Badge
                 key={tag}
@@ -277,13 +284,19 @@ const PostCard = ({
         {post.imageUrl && (
           <Link
             href={`/post/${post.id}`}
-            className="mt-3 block overflow-hidden rounded-lg">
+            className={cn(
+              "block overflow-hidden rounded-lg",
+              isGrid ? "mt-2" : "mt-3",
+            )}>
             <Image
               src={post.imageUrl}
               alt={`Photo shared by ${post.author.name}`}
               width={isGrid ? 800 : 1200}
               height={isGrid ? 450 : 800}
-              className="aspect-video w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+              className={cn(
+                "aspect-video w-full object-cover transition-transform duration-300 hover:scale-[1.02]",
+                isGrid && "max-h-72",
+              )}
               sizes={
                 isGrid ?
                   "(max-width: 768px) 100vw, 400px"
@@ -297,7 +310,7 @@ const PostCard = ({
       <CardFooter className="gap-1">
         <Button
           variant="ghost"
-          size="sm"
+          size={isGrid ? "xs" : "sm"}
           onClick={handleLike}
           disabled={likePending}
           aria-pressed={liked}
@@ -311,7 +324,9 @@ const PostCard = ({
         </Button>
         <Link
           href={`/post/${post.id}`}
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          className={cn(
+            buttonVariants({ variant: "ghost", size: isGrid ? "xs" : "sm" }),
+          )}
           aria-label="View replies">
           <MessageCircleIcon
             data-icon="inline-start"
@@ -321,7 +336,7 @@ const PostCard = ({
         </Link>
         <Button
           variant="ghost"
-          size="sm"
+          size={isGrid ? "xs" : "sm"}
           onClick={handleShare}
           aria-label="Share post">
           <Share2Icon

@@ -108,6 +108,5 @@ export const updateProfileAction = async (
 
   revalidatePath("/profile");
   revalidatePath("/feed");
-  revalidatePath("/dashboard");
   return { ok: true };
 };

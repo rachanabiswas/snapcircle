@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BellIcon,
-  LayoutDashboardIcon,
   NewspaperIcon,
   SettingsIcon,
   ShieldIcon,
@@ -46,19 +45,9 @@ const AppSidebar = ({
   const isAdmin = user?.role === "admin";
 
   type NavHref =
-    | "/dashboard"
-    | "/feed"
-    | "/profile"
-    | "/notifications"
-    | "/settings"
-    | "/admin";
+    "/feed" | "/profile" | "/notifications" | "/settings" | "/admin";
   const navItems: { href: NavHref; label: string; icon: LucideIcon }[] = [
     { href: "/feed", label: "Feed", icon: NewspaperIcon },
-    {
-      href: "/dashboard",
-      label: "Dashboard",
-      icon: LayoutDashboardIcon,
-    },
     { href: "/profile", label: "Profile", icon: UserIcon },
     {
       href: "/notifications",
@@ -78,7 +67,7 @@ const AppSidebar = ({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                size="lg"
+                size="default"
                 tooltip="SnapCircle"
                 render={<Link href="/feed" />}>
                 <span

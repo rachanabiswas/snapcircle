@@ -12,6 +12,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   baseURL: serverEnv.BETTER_AUTH_URL,
   secret: serverEnv.BETTER_AUTH_SECRET,
   plugins: [admin(), nextCookies()],

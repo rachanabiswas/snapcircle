@@ -26,7 +26,7 @@ const page = async () => {
   });
 
   if (session) {
-    redirect("/dashboard");
+    redirect("/feed");
   }
 
   return (

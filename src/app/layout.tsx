@@ -18,8 +18,8 @@ const RootLayout = ({ children }: LayoutProps) => {
       <body>
         <ThemeProvider
           attribute={"class"}
-          defaultTheme="dark"
-          enableSystem={false}>
+          defaultTheme="system"
+          enableSystem={true}>
           {children}
         </ThemeProvider>
       </body>

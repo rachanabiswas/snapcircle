@@ -28,6 +28,7 @@ model User {
   likes         Like[]
   notificationsReceived Notification[] @relation("NotificationRecipient")
   notificationsSent     Notification[] @relation("NotificationActor")
+  notificationPreference NotificationPreference?
 
   role       String?
   banned     Boolean?  @default(false)
@@ -140,4 +141,17 @@ model Notification {
   @@index([recipientId, createdAt])
   @@index([recipientId, readAt])
   @@map("notification")
+}
+
+model NotificationPreference {
+  id                 String   @id
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likeNotifications  Boolean  @default(true)
+  replyNotifications Boolean  @default(true)
+  pauseAll           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("notification_preference")
 }
