@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
 import ReplyForm from "@/components/Feed/ReplyForm";
+import PageContainer from "@/components/Layout/PageContainer";
 import {
   Card,
   CardContent,
@@ -90,30 +91,32 @@ const ThreadPage = async ({ params }: ThreadPageProps) => {
   });
 
   return (
-    <main className="mx-auto flex max-w-2xl flex-col gap-4 px-4 py-8">
-      <PostCard post={toCard(post, currentUserId)} />
+    <PageContainer>
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+        <PostCard post={toCard(post, currentUserId)} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Replies</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ReplyForm parentId={post.id} />
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Replies</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ReplyForm parentId={post.id} />
+          </CardContent>
+        </Card>
 
-      {replies.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <Separator />
-          {replies.map((reply) => (
-            <PostCard
-              key={reply.id}
-              post={toCard(reply, currentUserId)}
-            />
-          ))}
-        </div>
-      )}
-    </main>
+        {replies.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <Separator />
+            {replies.map((reply) => (
+              <PostCard
+                key={reply.id}
+                post={toCard(reply, currentUserId)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </PageContainer>
   );
 };
 

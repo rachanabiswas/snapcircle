@@ -22,6 +22,11 @@ const requireUser = async () => {
   return session?.user ?? null;
 };
 
+// Nested settings pages live under /settings; revalidate the layout to cover them.
+const revalidateSettingsPages = () => {
+  revalidatePath("/settings", "layout");
+};
+
 export const updateSettingsProfileAction = async (
   formData: FormData,
 ): Promise<ActionResult> => {
@@ -53,7 +58,7 @@ export const updateSettingsProfileAction = async (
     },
   });
 
-  revalidatePath("/settings");
+  revalidateSettingsPages();
   revalidatePath("/profile");
   revalidatePath("/feed");
   return { ok: true };
@@ -115,7 +120,7 @@ export const changeEmailAction = async (
     data: { email: newEmail, emailVerified: false },
   });
 
-  revalidatePath("/settings");
+  revalidateSettingsPages();
   revalidatePath("/profile");
   return { ok: true };
 };
@@ -165,7 +170,7 @@ export const updateNotificationPrefsAction = async (
     update: parsed.data,
   });
 
-  revalidatePath("/settings");
+  revalidateSettingsPages();
   revalidatePath("/notifications");
   return { ok: true };
 };

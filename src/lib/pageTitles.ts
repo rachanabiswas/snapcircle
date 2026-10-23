@@ -1,3 +1,5 @@
+import { SETTINGS_SECTION_LIST } from "@/lib/settings";
+
 export type HeaderCrumb = {
   label: string;
   href?: string;
@@ -25,6 +27,21 @@ const capitalize = (segment: string) =>
 export const getHeaderTitle = (pathname: string): HeaderTitle => {
   const exact = TITLES[pathname];
   if (exact) return exact;
+
+  if (pathname.startsWith("/settings/")) {
+    const section = SETTINGS_SECTION_LIST.find(
+      (item) => item.href === pathname,
+    );
+    if (section) {
+      return {
+        title: section.label,
+        crumbs: [
+          { label: "Settings", href: "/settings" },
+          { label: section.label },
+        ],
+      };
+    }
+  }
 
   // Dynamic post detail pages use a generic title with a back link to Feed.
   if (pathname === "/post" || pathname.startsWith("/post/")) {

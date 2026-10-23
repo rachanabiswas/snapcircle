@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
+import PageContainer from "@/components/Layout/PageContainer";
 import ProfileSection from "@/components/Profile/ProfileSection";
 import {
   Card,
@@ -41,11 +42,11 @@ const ProfilePage = async () => {
 
   if (!user) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-8">
+      <PageContainer>
         <p className="text-muted-foreground">
           Please sign in to view your profile.
         </p>
-      </main>
+      </PageContainer>
     );
   }
 
@@ -89,7 +90,7 @@ const ProfilePage = async () => {
   }));
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <PageContainer>
       <ProfileSection
         user={{
           name: user.name,
@@ -142,7 +143,7 @@ const ProfilePage = async () => {
           </div>
         }
       </div>
-    </main>
+    </PageContainer>
   );
 };
 

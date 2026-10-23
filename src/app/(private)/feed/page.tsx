@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import ComposeBox from "@/components/Feed/ComposeBox";
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
 import TimeAgo from "@/components/Feed/TimeAgo";
+import PageContainer from "@/components/Layout/PageContainer";
 import {
   Avatar,
   AvatarFallback,
@@ -92,7 +93,7 @@ const FeedPage = async () => {
   }));
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-6">
+    <PageContainer className="py-6">
       <ComposeBox
         user={{
           name: currentUser?.name ?? null,
@@ -200,7 +201,7 @@ const FeedPage = async () => {
           </Card>
         </aside>
       </div>
-    </main>
+    </PageContainer>
   );
 };
 

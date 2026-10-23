@@ -1,8 +1,9 @@
+import PageContainer from "@/components/Layout/PageContainer";
 import { Skeleton } from "@/components/shadcnui/skeleton";
 
 const FeedLoading = () => {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <PageContainer className="py-6">
       <Skeleton className="h-48 w-full" />
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_300px]">
         <div className="grid min-w-0 items-start gap-4 sm:grid-cols-2">
@@ -36,7 +37,7 @@ const FeedLoading = () => {
           </div>
         </div>
       </div>
-    </main>
+    </PageContainer>
   );
 };
 

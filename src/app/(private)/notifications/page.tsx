@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 
+import PageContainer from "@/components/Layout/PageContainer";
 import NotificationsList, {
   type FeedItem,
 } from "@/components/Notifications/NotificationsList";
@@ -112,9 +113,9 @@ const NotificationsPage = async () => {
   items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
+    <PageContainer>
       <NotificationsList items={items} />
-    </main>
+    </PageContainer>
   );
 };
 

@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import UsersTable from "@/components/Admin/UsersTable";
+import PageContainer from "@/components/Layout/PageContainer";
 import { auth } from "@/lib/auth";
 
 const AdminPage = async () => {
@@ -14,9 +15,9 @@ const AdminPage = async () => {
   }
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-10">
       <UsersTable />
-    </div>
+    </PageContainer>
   );
 };
 

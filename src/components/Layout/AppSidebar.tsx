@@ -95,7 +95,10 @@ const AppSidebar = ({
                 {navItems.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
-                      isActive={pathname === item.href}
+                      isActive={
+                        pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`)
+                      }
                       tooltip={
                         item.href === "/notifications" && unreadCount > 0 ?
                           `Notifications, ${unreadCount} unread`
