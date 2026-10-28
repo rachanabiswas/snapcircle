@@ -62,7 +62,9 @@ const AppSidebar = ({
 
   return (
     <TooltipProvider delay={0}>
-      <Sidebar collapsible="icon">
+      <Sidebar
+        collapsible="icon"
+        className="app-sidebar-glass">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>

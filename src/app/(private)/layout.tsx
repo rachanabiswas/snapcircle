@@ -37,7 +37,7 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
         }}
         unreadCount={unreadCount}
       />
-      <SidebarInset>
+      <SidebarInset className="bg-transparent">
         <AppHeader
           user={{
             name: user.name,

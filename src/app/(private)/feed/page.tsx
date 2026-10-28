@@ -102,7 +102,7 @@ const FeedPage = async () => {
         }}
       />
 
-      <div className="mt-3 grid items-start gap-3 lg:grid-cols-[1fr_300px]">
+      <div className="mt-3 grid grid-cols-1 items-start gap-3 lg:grid-cols-[1fr_300px]">
         <div className="flex min-w-0 flex-col gap-3">
           {cards.length === 0 ?
             <Card>

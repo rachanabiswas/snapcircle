@@ -65,6 +65,13 @@ generated/prisma/   # Prisma client output (gitignored)
 public/uploads/     # User uploads (all files ignored except .gitkeep)
 ```
 
+## Ambient background
+
+- Root layout renders `AppBackdrop` behind a `relative z-10` content wrapper. Keep page and shell surfaces transparent so the backdrop shows; cards stay `bg-card`.
+- Backdrop tokens and layers live in `src/app/globals.css` (`--backdrop-*`, `.app-backdrop-*`). Dark mode reuses the same layers with different tokens.
+- The sticky `AppHeader` is solid by default and translucent only when `backdrop-filter` is supported.
+- The feed grid needs `grid-cols-1` on mobile. Without an explicit column, the implicit auto track can grow to the card's min-content width and cause horizontal scroll.
+
 ## Gitignore pattern: uploads
 
 `public/uploads/*` + `!public/uploads/.gitkeep` — ignores all uploaded files but keeps empty dir tracked via `.gitkeep`. Do not add `public/uploads/` itself to gitignore.
