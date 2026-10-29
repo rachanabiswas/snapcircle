@@ -53,6 +53,7 @@ export type PostCardPost = {
   createdAt: string;
   updatedAt?: string | null;
   author: {
+    id: string;
     name: string;
     image: string | null;
     email?: string | null;
@@ -177,23 +178,30 @@ const PostCard = ({
   };
 
   return (
-    <Card
-      size={isGrid ? "sm" : "default"}
-      className="transition-shadow hover:shadow-md">
+    <Card size={isGrid ? "sm" : "default"}>
       <CardHeader>
         <div className={cn("flex items-center", isGrid ? "gap-2" : "gap-3")}>
-          <Avatar size={isGrid ? "sm" : "default"}>
-            {post.author.image && (
-              <AvatarImage
-                src={post.author.image}
-                alt={`${post.author.name} avatar`}
-              />
-            )}
-            <AvatarFallback>{getInitials(post.author.name)}</AvatarFallback>
-          </Avatar>
+          <Link
+            href={`/profile/${post.author.id}`}
+            className="shrink-0"
+            aria-label={`View ${post.author.name}'s profile`}>
+            <Avatar size={isGrid ? "sm" : "default"}>
+              {post.author.image && (
+                <AvatarImage
+                  src={post.author.image}
+                  alt={`${post.author.name} avatar`}
+                />
+              )}
+              <AvatarFallback>{getInitials(post.author.name)}</AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="flex min-w-0 flex-1 flex-col leading-tight">
             <span className="flex items-center gap-2">
-              <span className="truncate font-medium">{post.author.name}</span>
+              <Link
+                href={`/profile/${post.author.id}`}
+                className="truncate font-medium hover:underline">
+                {post.author.name}
+              </Link>
               {post.isPopular && (
                 <Badge
                   variant="secondary"

@@ -26,6 +26,8 @@ model User {
   accounts      Account[]
   posts         Post[]
   likes         Like[]
+  followers     Follow[]  @relation("FollowTarget")
+  following     Follow[]  @relation("FollowSource")
   notificationsReceived Notification[] @relation("NotificationRecipient")
   notificationsSent     Notification[] @relation("NotificationActor")
   notificationPreference NotificationPreference?
@@ -141,6 +143,19 @@ model Notification {
   @@index([recipientId, createdAt])
   @@index([recipientId, readAt])
   @@map("notification")
+}
+
+model Follow {
+  id          String   @id
+  followerId  String
+  followingId String
+  follower    User     @relation("FollowSource", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("FollowTarget", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+  @@map("follow")
 }
 
 model NotificationPreference {

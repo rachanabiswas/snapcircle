@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 
 import ComposeBox from "@/components/Feed/ComposeBox";
+import FollowersStrip from "@/components/Feed/FollowersStrip";
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
 import TimeAgo from "@/components/Feed/TimeAgo";
 import PageContainer from "@/components/Layout/PageContainer";
@@ -41,7 +42,7 @@ const FeedPage = async () => {
   const currentUser = session?.user;
   const currentUserId = currentUser?.id ?? "";
 
-  const [posts, popular, newestMembers] = await Promise.all([
+  const [posts, popular, newestMembers, followerRows] = await Promise.all([
     prisma.post.findMany({
       where: { parentId: null },
       orderBy: { createdAt: "desc" },
@@ -67,10 +68,26 @@ const FeedPage = async () => {
     prisma.user.findMany({
       where: { id: { not: currentUserId } },
       orderBy: { createdAt: "desc" },
-      take: 3,
+      take: 8,
       select: { id: true, name: true, image: true, createdAt: true },
     }),
+    currentUserId ?
+      prisma.follow.findMany({
+        where: { followingId: currentUserId },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+        select: {
+          follower: { select: { id: true, name: true, image: true } },
+        },
+      })
+    : [],
   ]);
+
+  const followers = followerRows.map((row) => row.follower);
+  const stripMembers =
+    followers.length > 0 ?
+      followers
+    : newestMembers.map(({ id, name, image }) => ({ id, name, image }));
 
   const popularIds = new Set(popular.map((post) => post.id));
 
@@ -81,6 +98,7 @@ const FeedPage = async () => {
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
     author: {
+      id: post.author.id,
       name: post.author.name,
       image: post.author.image,
       email: post.author.email,
@@ -94,13 +112,20 @@ const FeedPage = async () => {
 
   return (
     <PageContainer className="py-6">
-      <ComposeBox
-        user={{
-          name: currentUser?.name ?? null,
-          email: currentUser?.email ?? null,
-          image: currentUser?.image ?? null,
-        }}
+      <FollowersStrip
+        members={stripMembers}
+        isFallback={followers.length === 0}
       />
+
+      <div className="mt-3">
+        <ComposeBox
+          user={{
+            name: currentUser?.name ?? null,
+            email: currentUser?.email ?? null,
+            image: currentUser?.image ?? null,
+          }}
+        />
+      </div>
 
       <div className="mt-3 grid grid-cols-1 items-start gap-3 lg:grid-cols-[1fr_300px]">
         <div className="flex min-w-0 flex-col gap-3">
@@ -171,7 +196,7 @@ const FeedPage = async () => {
                 <p className="text-muted-foreground text-sm">
                   You are the first one here.
                 </p>
-              : newestMembers.map((member) => (
+              : newestMembers.slice(0, 3).map((member) => (
                   <div
                     key={member.id}
                     className="flex items-center gap-3">

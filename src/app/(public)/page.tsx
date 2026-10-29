@@ -33,7 +33,7 @@ const PublicPage = async () => {
 
       <div className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-md">
-          <Card>
+          <Card className="bg-card/85 backdrop-blur-md">
             <CardHeader>
               <CardTitle>Welcome back</CardTitle>
               <CardDescription>

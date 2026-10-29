@@ -43,6 +43,7 @@ const toCard = (
   createdAt: post.createdAt.toISOString(),
   updatedAt: post.updatedAt.toISOString(),
   author: {
+    id: post.author.id,
     name: post.author.name,
     image: post.author.image,
     email: post.author.email,

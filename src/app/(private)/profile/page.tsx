@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
 import PageContainer from "@/components/Layout/PageContainer";
 import ProfileSection from "@/components/Profile/ProfileSection";
+import ProfileStats from "@/components/Profile/ProfileStats";
 import {
   Card,
   CardContent,
@@ -36,6 +37,7 @@ const ProfilePage = async () => {
           image: true,
           bio: true,
           gender: true,
+          _count: { select: { followers: true, following: true } },
         },
       })
     : null;
@@ -50,27 +52,73 @@ const ProfilePage = async () => {
     );
   }
 
-  const [postsCount, likesReceived, posts] = await Promise.all([
-    prisma.post.count({
-      where: { authorId: user.id, parentId: null },
-    }),
-    prisma.like.count({
-      where: { post: { authorId: user.id } },
-    }),
-    prisma.post.findMany({
-      where: { authorId: user.id, parentId: null },
-      orderBy: { createdAt: "desc" },
-      take: 10,
-      include: {
-        author: { select: { id: true, name: true, image: true, email: true } },
-        _count: { select: { likes: true, replies: true } },
-        likes: {
-          where: { userId: user.id },
-          select: { id: true },
+  const [postsCount, likesReceived, posts, followerRows, followingRows] =
+    await Promise.all([
+      prisma.post.count({
+        where: { authorId: user.id, parentId: null },
+      }),
+      prisma.like.count({
+        where: { post: { authorId: user.id } },
+      }),
+      prisma.post.findMany({
+        where: { authorId: user.id, parentId: null },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        include: {
+          author: {
+            select: { id: true, name: true, image: true, email: true },
+          },
+          _count: { select: { likes: true, replies: true } },
+          likes: {
+            where: { userId: user.id },
+            select: { id: true },
+          },
         },
-      },
-    }),
-  ]);
+      }),
+      prisma.follow.findMany({
+        where: { followingId: user.id },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+        select: {
+          follower: {
+            select: { id: true, name: true, image: true, bio: true },
+          },
+        },
+      }),
+      prisma.follow.findMany({
+        where: { followerId: user.id },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+        select: {
+          following: {
+            select: { id: true, name: true, image: true, bio: true },
+          },
+        },
+      }),
+    ]);
+
+  const followerIds = followerRows.map((row) => row.follower.id);
+  const followedBack =
+    followerIds.length > 0 ?
+      await prisma.follow.findMany({
+        where: {
+          followerId: user.id,
+          followingId: { in: followerIds },
+        },
+        select: { followingId: true },
+      })
+    : [];
+
+  const followedBackIds = new Set(followedBack.map((row) => row.followingId));
+
+  const followers = followerRows.map((row) => ({
+    ...row.follower,
+    viewerFollowing: followedBackIds.has(row.follower.id),
+  }));
+  const following = followingRows.map((row) => ({
+    ...row.following,
+    viewerFollowing: true,
+  }));
 
   const cards: PostCardPost[] = posts.map((post) => ({
     id: post.id,
@@ -79,6 +127,7 @@ const ProfilePage = async () => {
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
     author: {
+      id: post.author.id,
       name: post.author.name,
       image: post.author.image,
       email: post.author.email,
@@ -101,20 +150,17 @@ const ProfilePage = async () => {
         }}
       />
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{postsCount}</CardTitle>
-            <CardDescription>Posts</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{likesReceived}</CardTitle>
-            <CardDescription>Likes received</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <ProfileStats
+        postsCount={postsCount}
+        likesReceived={likesReceived}
+        followersCount={user._count.followers}
+        followingCount={user._count.following}
+        followers={followers}
+        following={following}
+        viewerId={user.id}
+        emptyFollowers="You do not have any followers yet."
+        emptyFollowing="You are not following anyone yet."
+      />
 
       <div className="mt-6">
         <h2 className="mb-3 text-lg font-semibold">Your recent posts</h2>

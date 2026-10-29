@@ -32,7 +32,7 @@ const page = async () => {
   return (
     <>
       <main className="grid min-h-dvh place-items-center p-4">
-        <Card className="w-full max-w-sm">
+        <Card className="bg-card/85 w-full max-w-sm backdrop-blur-md">
           <CardHeader>
             <AuthCardHeader />
             <CardTitle>Create an account</CardTitle>

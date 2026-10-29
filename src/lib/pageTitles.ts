@@ -51,6 +51,14 @@ export const getHeaderTitle = (pathname: string): HeaderTitle => {
     };
   }
 
+  // Other people's profiles share the same title as your own profile.
+  if (pathname.startsWith("/profile/")) {
+    return {
+      title: "Profile",
+      crumbs: [{ label: "Profile" }],
+    };
+  }
+
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) {
     return { title: "SnapCircle", crumbs: [{ label: "SnapCircle" }] };
