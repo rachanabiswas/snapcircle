@@ -5,6 +5,10 @@ import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/dbClient/prisma";
+import {
+  fetchNotificationItems,
+  type FeedItem,
+} from "@/lib/notificationsGrouping";
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -54,4 +58,30 @@ export const markAllAsReadAction = async (): Promise<ActionResult> => {
   revalidatePath("/notifications");
   revalidatePath("/feed");
   return { ok: true };
+};
+
+type NotificationsPage =
+  | { ok: true; items: FeedItem[]; nextCursor: string | null }
+  | { ok: false; error: string };
+
+export const getNotificationsAction = async (
+  cursor: string | null,
+): Promise<NotificationsPage> => {
+  const user = await requireUser();
+  if (!user) {
+    return { ok: false, error: "You must be signed in" };
+  }
+
+  // A stale cursor (e.g. the anchor notification was deleted between
+  // batches) is expected to fail; surface it as a retryable error instead
+  // of crashing.
+  try {
+    const { items, nextCursor } = await fetchNotificationItems(user.id, cursor);
+    return { ok: true, items, nextCursor };
+  } catch {
+    return {
+      ok: false,
+      error: "Could not load more notifications. Please try again.",
+    };
+  }
 };

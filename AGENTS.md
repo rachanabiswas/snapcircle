@@ -53,14 +53,16 @@ src/
     Layout/         # Header, ThemeToggleButton
     Providers/      # ThemeProvider (next-themes)
     shadcnui/       # shadcn primitives (button.tsx, toast.tsx)
-  hooks/            # Custom hooks (currently empty)
+  hooks/            # Custom hooks (useInfiniteCursor: cursor infinite scroll)
   lib/
     dbClient/       # Prisma singleton with libSQL adapter
     env/            # serverEnv.ts, clientEnv.ts (t3-env)
     fonts.ts        # next/font (Geist, Inter)
     types.ts        # LayoutProps
     utils.ts        # cn() helper (clsx + tailwind-merge)
-  server/           # API routes placeholder (empty)
+    feedPosts.ts    # Feed/card mapping + cursor pagination queries
+    notificationsGrouping.ts # Notification pagination, like-grouping, counts
+  server/           # "use server" actions (posts, follows, notifications)
 generated/prisma/   # Prisma client output (gitignored)
 public/uploads/     # User uploads (all files ignored except .gitkeep)
 ```
@@ -96,6 +98,12 @@ public/uploads/     # User uploads (all files ignored except .gitkeep)
 
 - Seed: `prisma/seed.ts` (admin user, hardcoded creds: `titlyb@gmail.com` / `titlyb@gmail.com`), wired via `migrations.seed` in `prisma.config.ts`. Uses `upsert` on user (by email) + account (by `providerId_accountId` unique) and `hashPassword` from `better-auth/crypto` — idempotent, resets password on re-run.
 - Prisma v7 removed auto-seeding on `migrate dev`/`migrate reset` — seeding runs ONLY via `prisma db seed` (`bun run db:seed`).
+
+## Data fetching (feed & notifications)
+
+- Cursor pagination over `generateId()` ids (non-monotonic): use Prisma `cursor: { id }` + `skip: 1` with `orderBy: { createdAt: "desc" }` — never `id < cursor` comparisons.
+- `"use server"` files may only export async actions; shared query helpers live in `src/lib/` (`feedPosts.ts`, `notificationsGrouping.ts`).
+- Client lists seeded from server props (`FeedStream`, `NotificationsPane`): when an action revalidates the path, fresh page-1 props arrive and the merge effect must keep only locally-appended items outside the PREVIOUS page-1 scope. Filtering by the NEW props' id set resurrects deleted items (they are naturally absent from it).
 
 ## Form patterns
 

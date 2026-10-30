@@ -6,8 +6,11 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { generateId } from "@better-auth/core/utils/id";
 
+import type { PostCardPost } from "@/components/Feed/PostCard";
+
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/dbClient/prisma";
+import { getFeedPage } from "@/lib/feedPosts";
 import { postContentSchema } from "@/lib/zodSchema";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -248,4 +251,29 @@ export const deletePostAction = async (
     revalidatePath(`/post/${post.parentId}`);
   }
   return { ok: true };
+};
+
+type FeedPostsPage =
+  | { ok: true; items: PostCardPost[]; nextCursor: string | null }
+  | { ok: false; error: string };
+
+export const getFeedPostsAction = async (
+  cursor: string | null,
+): Promise<FeedPostsPage> => {
+  const user = await requireUser();
+  if (!user) {
+    return { ok: false, error: "You must be signed in to view the feed" };
+  }
+
+  // A stale cursor (e.g. the anchor post was deleted between batches) is
+  // expected to fail; surface it as a retryable error instead of crashing.
+  try {
+    const page = await getFeedPage(user.id, cursor);
+    return { ok: true, items: page.posts, nextCursor: page.nextCursor };
+  } catch {
+    return {
+      ok: false,
+      error: "Could not load more posts. Please try again.",
+    };
+  }
 };

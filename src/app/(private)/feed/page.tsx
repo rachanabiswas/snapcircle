@@ -2,10 +2,11 @@ import Link from "next/link";
 import { headers } from "next/headers";
 
 import ComposeBox from "@/components/Feed/ComposeBox";
+import FeedStream from "@/components/Feed/FeedStream";
 import FollowersStrip from "@/components/Feed/FollowersStrip";
-import PostCard, { type PostCardPost } from "@/components/Feed/PostCard";
 import TimeAgo from "@/components/Feed/TimeAgo";
 import PageContainer from "@/components/Layout/PageContainer";
+import FollowButton from "@/components/Profile/FollowButton";
 import {
   Avatar,
   AvatarFallback,
@@ -15,12 +16,12 @@ import { Badge } from "@/components/shadcnui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/shadcnui/card";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/dbClient/prisma";
+import { getFeedPage, getFeedPopular } from "@/lib/feedPosts";
 
 export const metadata = {
   title: "Feed",
@@ -42,35 +43,8 @@ const FeedPage = async () => {
   const currentUser = session?.user;
   const currentUserId = currentUser?.id ?? "";
 
-  const [posts, popular, newestMembers, followerRows] = await Promise.all([
-    prisma.post.findMany({
-      where: { parentId: null },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      include: {
-        author: { select: { id: true, name: true, image: true, email: true } },
-        _count: { select: { likes: true, replies: true } },
-        likes: {
-          where: { userId: currentUserId },
-          select: { id: true },
-        },
-      },
-    }),
-    prisma.post.findMany({
-      where: { parentId: null },
-      orderBy: [{ likes: { _count: "desc" } }, { createdAt: "desc" }],
-      take: 3,
-      include: {
-        author: { select: { name: true } },
-        _count: { select: { likes: true } },
-      },
-    }),
-    prisma.user.findMany({
-      where: { id: { not: currentUserId } },
-      orderBy: { createdAt: "desc" },
-      take: 8,
-      select: { id: true, name: true, image: true, createdAt: true },
-    }),
+  const [popular, followerRows, feed] = await Promise.all([
+    getFeedPopular(),
     currentUserId ?
       prisma.follow.findMany({
         where: { followingId: currentUserId },
@@ -81,37 +55,35 @@ const FeedPage = async () => {
         },
       })
     : [],
+    getFeedPage(currentUserId, null),
   ]);
 
   const followers = followerRows.map((row) => row.follower);
+
+  const newestMembers = await prisma.user.findMany({
+    where: { id: { not: currentUserId } },
+    orderBy: { createdAt: "desc" },
+    take: 8,
+    select: { id: true, name: true, image: true, createdAt: true },
+  });
+
   const stripMembers =
     followers.length > 0 ?
       followers
     : newestMembers.map(({ id, name, image }) => ({ id, name, image }));
 
-  const popularIds = new Set(popular.map((post) => post.id));
-
-  const cards: PostCardPost[] = posts.map((post) => ({
-    id: post.id,
-    content: post.content,
-    imageUrl: post.imageUrl,
-    createdAt: post.createdAt.toISOString(),
-    updatedAt: post.updatedAt.toISOString(),
-    author: {
-      id: post.author.id,
-      name: post.author.name,
-      image: post.author.image,
-      email: post.author.email,
+  const suggestedMembers = await prisma.user.findMany({
+    where: {
+      id: { notIn: [currentUserId, ...newestMembers.map((m) => m.id)] },
+      NOT: { followers: { some: { followerId: currentUserId } } },
     },
-    likeCount: post._count.likes,
-    replyCount: post._count.replies,
-    liked: post.likes.length > 0,
-    isOwner: post.author.id === currentUserId,
-    isPopular: popularIds.has(post.id),
-  }));
+    orderBy: { createdAt: "desc" },
+    take: 3,
+    select: { id: true, name: true, image: true },
+  });
 
   return (
-    <PageContainer className="py-6">
+    <PageContainer className="max-w-7xl py-6">
       <FollowersStrip
         members={stripMembers}
         isFallback={followers.length === 0}
@@ -127,30 +99,12 @@ const FeedPage = async () => {
         />
       </div>
 
-      <div className="mt-3 grid grid-cols-1 items-start gap-3 lg:grid-cols-[1fr_300px]">
-        <div className="flex min-w-0 flex-col gap-3">
-          {cards.length === 0 ?
-            <Card>
-              <CardHeader>
-                <CardTitle>No posts yet</CardTitle>
-                <CardDescription>
-                  Be the first to share something with your circle.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  Write a post above to get the conversation started.
-                </p>
-              </CardContent>
-            </Card>
-          : cards.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                layout="grid"
-              />
-            ))
-          }
+      <div className="mt-3 grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0">
+          <FeedStream
+            initialPosts={feed.posts}
+            initialCursor={feed.nextCursor}
+          />
         </div>
 
         <aside className="flex flex-col gap-3 lg:sticky lg:top-16">
@@ -196,7 +150,7 @@ const FeedPage = async () => {
                 <p className="text-muted-foreground text-sm">
                   You are the first one here.
                 </p>
-              : newestMembers.slice(0, 3).map((member) => (
+              : newestMembers.map((member) => (
                   <div
                     key={member.id}
                     className="flex items-center gap-3">
@@ -219,6 +173,53 @@ const FeedPage = async () => {
                         joined <TimeAgo iso={member.createdAt.toISOString()} />
                       </span>
                     </div>
+                  </div>
+                ))
+              }
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Who to follow</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              {suggestedMembers.length === 0 ?
+                <p className="text-muted-foreground text-sm">
+                  You already know the whole circle.
+                </p>
+              : suggestedMembers.map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center gap-3">
+                    <Link
+                      href={`/profile/${member.id}`}
+                      className="shrink-0"
+                      aria-label={`View ${member.name}'s profile`}>
+                      <Avatar size="sm">
+                        {member.image && (
+                          <AvatarImage
+                            src={member.image}
+                            alt={`${member.name} avatar`}
+                          />
+                        )}
+                        <AvatarFallback>
+                          {getInitials(member.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <Link
+                      href={`/profile/${member.id}`}
+                      className="min-w-0 flex-1 leading-tight">
+                      <span className="block truncate text-sm font-medium hover:underline">
+                        {member.name}
+                      </span>
+                    </Link>
+                    <FollowButton
+                      targetId={member.id}
+                      initialFollowing={false}
+                      size="xs"
+                    />
                   </div>
                 ))
               }

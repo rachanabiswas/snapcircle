@@ -3,10 +3,11 @@ import { Skeleton } from "@/components/shadcnui/skeleton";
 
 const FeedLoading = () => {
   return (
-    <PageContainer className="py-6">
-      <Skeleton className="h-48 w-full" />
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_300px]">
-        <div className="grid min-w-0 items-start gap-4 sm:grid-cols-2">
+    <PageContainer className="max-w-7xl py-6">
+      <Skeleton className="h-28 w-full" />
+      <Skeleton className="mt-3 h-44 w-full" />
+      <div className="mt-3 grid grid-cols-1 items-start gap-3 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid min-w-0 grid-cols-1 items-start gap-3 sm:grid-cols-2">
           {[0, 1, 2, 3].map((key) => (
             <div
               key={key}
@@ -20,10 +21,11 @@ const FeedLoading = () => {
               </div>
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-20 w-full" />
             </div>
           ))}
         </div>
-        <div className="hidden flex-col gap-4 lg:flex">
+        <aside className="hidden flex-col gap-3 lg:flex">
           <div className="flex flex-col gap-3 rounded-xl border p-6">
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-4 w-full" />
@@ -33,9 +35,14 @@ const FeedLoading = () => {
           <div className="flex flex-col gap-3 rounded-xl border p-6">
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
           </div>
-        </div>
+          <div className="flex flex-col gap-3 rounded-xl border p-6">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        </aside>
       </div>
     </PageContainer>
   );

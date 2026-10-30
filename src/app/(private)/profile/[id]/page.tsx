@@ -166,7 +166,7 @@ const PublicProfilePage = async ({ params }: ProfilePageProps) => {
   }));
 
   return (
-    <PageContainer>
+    <PageContainer className="max-w-7xl">
       <PublicProfileHeader
         user={{
           id: user.id,

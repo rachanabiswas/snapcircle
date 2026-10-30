@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 
 const SettingsLayout = ({ children }: LayoutProps) => {
   return (
-    <PageContainer className="flex flex-col gap-6">{children}</PageContainer>
+    <PageContainer className="flex max-w-7xl flex-col gap-6">
+      {children}
+    </PageContainer>
   );
 };
 

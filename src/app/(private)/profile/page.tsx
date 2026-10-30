@@ -44,7 +44,7 @@ const ProfilePage = async () => {
 
   if (!user) {
     return (
-      <PageContainer>
+      <PageContainer className="max-w-7xl">
         <p className="text-muted-foreground">
           Please sign in to view your profile.
         </p>
@@ -139,7 +139,7 @@ const ProfilePage = async () => {
   }));
 
   return (
-    <PageContainer>
+    <PageContainer className="max-w-7xl">
       <ProfileSection
         user={{
           name: user.name,
