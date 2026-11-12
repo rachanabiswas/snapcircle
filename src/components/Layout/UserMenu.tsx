@@ -55,7 +55,7 @@ const UserMenu = ({ user }: { user: HeaderUser }) => {
             description: "See you soon!",
             type: "success",
           });
-          router.push("/");
+          router.push("/login");
         },
         onError: (ctx) => {
           toast.add({

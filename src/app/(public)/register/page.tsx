@@ -47,7 +47,7 @@ const page = async () => {
             <p className="text-muted-foreground text-sm">
               Already have an account?{" "}
               <Link
-                href="/"
+                href="/login"
                 className="text-primary underline-offset-4 hover:underline">
                 Sign in
               </Link>

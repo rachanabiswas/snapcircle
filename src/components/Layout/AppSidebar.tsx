@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -70,13 +71,17 @@ const AppSidebar = ({
             <SidebarMenuItem>
               <SidebarMenuButton
                 size="default"
+                className="group-data-[collapsible=icon]:p-0!"
                 tooltip="SnapCircle"
+                aria-label="SnapCircle"
                 render={<Link href="/feed" />}>
-                <span
-                  className="bg-primary text-primary-foreground font-heading flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold"
-                  aria-hidden="true">
-                  S
-                </span>
+                <Image
+                  src="/brand/snapcircle-mark.png"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="ring-foreground/10 size-8 shrink-0 rounded-full ring-1"
+                />
                 <span className="flex flex-col text-left leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="font-heading truncate text-sm font-medium">
                     SnapCircle

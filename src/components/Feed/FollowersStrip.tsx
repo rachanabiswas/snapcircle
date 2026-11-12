@@ -50,7 +50,7 @@ const FollowersStrip = ({
         <p className="text-muted-foreground px-1 pt-2 pb-1 text-sm">
           No one has joined yet. Share SnapCircle with a friend.
         </p>
-      : <ul className="mt-2 flex gap-3 overflow-x-auto px-1 pb-1">
+      : <ul className="mt-2 flex gap-3 overflow-x-auto px-1 py-1">
           {members.map((member) => (
             <li
               key={member.id}

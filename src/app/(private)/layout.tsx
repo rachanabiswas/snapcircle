@@ -14,7 +14,7 @@ const PrivateLayout = async ({ children }: LayoutProps) => {
   });
 
   if (!session) {
-    redirect("/");
+    redirect("/login");
   }
 
   const cookieStore = await cookies();

@@ -25,7 +25,7 @@ const ProfileSettingsPage = async () => {
   });
 
   if (!session?.user) {
-    redirect("/");
+    redirect("/login");
   }
 
   const user = await prisma.user.findUnique({

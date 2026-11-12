@@ -19,7 +19,7 @@ const NotificationsSettingsPage = async () => {
   });
 
   if (!session?.user) {
-    redirect("/");
+    redirect("/login");
   }
 
   const prefs = await prisma.notificationPreference.findUnique({

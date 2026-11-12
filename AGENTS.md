@@ -28,13 +28,15 @@ Path aliases: `@/*` → `./src/*`, `@generated/*` → `./generated/*`.
 - **Explain before asking**: when you need to ask a question, first explain in plain words what you are asking and what each option means, then call the question tool.
 - **Update this file** when you discover non-obvious gotchas, fixes, or conventions.
 - **Use skills + MCPs** before writing code matching `prisma-*`, `next-*`, `better-auth-*`, `zod`, etc. Use `shadcn` MCP for component add/search/audit. Use `better-auth` MCP for auth docs.
+- **Parallelize independent work**: this applies to everything, not just Playwright. Whenever a task involves many steps, batch every independent tool call into one parallel block instead of running them one after another. This covers reads, greps, globs, shell commands, sub-agent launches, and any mix of them. Serialize only calls whose arguments depend on a previous result. Never use placeholders or guess missing parameters to force a parallel batch.
+- **Delegate all `playwright-cli` work to a sub-agent**: any Playwright task (verification, UI testing, exploratory checks, screenshot review) is handed to a sub-agent and never run directly. Give the sub-agent complete context so it can work autonomously: the route or URL, what to verify and expected behavior, login credentials if needed, how the server is running (detached, port 3000), and what to return (findings plus screenshot paths).
 
 ## Verification
 
 - **Primary**: `bun lint` — runs `next typegen && tsc --noEmit && eslint`
 - **Build gate**: `bun run build` — `prisma generate && next build`
 - **Full prod**: `bun prod` — `prisma generate && next build && next start` (before schema/env changes)
-- **Visual/UI verification**: Use `playwright-cli` in `--headed` mode. Run `playwright-cli --help` to see all available commands. Capture and review screenshots with `playwright-cli screenshot` (vision capable). Example: `playwright-cli open http://localhost:3000 --headed` then `playwright-cli screenshot --full-page`.
+- **Visual/UI verification**: Run `playwright-cli` through a sub-agent, never directly (see Agent behavior). The sub-agent uses `--headed` mode, runs `playwright-cli --help` to see all available commands, and captures screenshots with `playwright-cli screenshot` (vision capable). Example: `playwright-cli open http://localhost:3000 --headed` then `playwright-cli screenshot --full-page`.
 - **Stale generated client**: after `prisma generate`, restart any running dev server. A stale client crashes private routes with undefined model access. Test logins against port 3000 since auth URLs point there.
 
 ## Background processes

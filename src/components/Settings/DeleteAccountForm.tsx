@@ -41,7 +41,7 @@ const DeleteAccountForm = () => {
     if (values.confirm !== "DELETE") return;
     const { error } = await authClient.deleteUser({
       password: values.password,
-      callbackURL: "/",
+      callbackURL: "/login",
     });
     if (error) {
       toast.add({
@@ -57,7 +57,7 @@ const DeleteAccountForm = () => {
       type: "success",
     });
     setOpen(false);
-    router.push("/");
+    router.push("/login");
   });
 
   return (
